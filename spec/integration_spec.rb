@@ -13,11 +13,11 @@ LATITUDE = '47.654'
 LONGITUDE = '-122.305'
 
 def svcenv
- ENV['svcenv'] or "local"
+ ENV['svcenv'] or "acceptance"
 end
 
 def appenv
- ENV['appenv'] or "local"
+ ENV['appenv'] or "acceptance"
 end
 
 def base_services_url
