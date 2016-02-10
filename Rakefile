@@ -15,7 +15,7 @@ task :deploy do
   require 'yaml'
 
   repos = %w[ weatherbus-bus weatherbus-weather weatherbus weatherbus-web ].each.with_object({}) do |repo, repos|
-    repos[repo] = last_successful_commit(repo)
+    repos[repo] = ENV.fetch(repo.sub('weatherbus', 'deploy-wb').gsub('-', '_').upcase) { last_successful_commit(repo) }
   end
 
   repos.each do |repo, commit|
