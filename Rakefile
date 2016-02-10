@@ -23,7 +23,14 @@ task :deploy do
   puts 'Deploying the following commits:'
   repos.each do |repo, build|
     name = repo.ljust(repos.keys.map(&:size).max)
-    puts "#{name} (#{build['commit'][0, 8]}): #{build['message']}"
+    message = nil
+
+    Dir.chdir("modules/#{repo}") do
+      system('git fetch')
+      message = `git show -s --format=%s #{build['commit']}`
+    end
+
+    puts "#{name} (#{build['commit'][0, 8]}): #{message}"
   end
   print 'Continue? [y/N] '
   exit unless STDIN.gets.chomp.downcase == 'y'
