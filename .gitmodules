@@ -1,0 +1,12 @@
+[submodule "modules/weatherbus"]
+	path = modules/weatherbus
+	url = https://github.com/seattle-beach/weatherbus
+[submodule "modules/weatherbus-web"]
+	path = modules/weatherbus-web
+	url = https://github.com/seattle-beach/weatherbus-web
+[submodule "modules/weatherbus-bus"]
+	path = modules/weatherbus-bus
+	url = https://github.com/seattle-beach/weatherbus-bus
+[submodule "modules/weatherbus-weather"]
+	path = modules/weatherbus-weather
+	url = https://github.com/seattle-beach/weatherbus-weather
