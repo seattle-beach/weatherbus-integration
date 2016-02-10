@@ -17,29 +17,28 @@ task :deploy do
   repos = %w[ weatherbus-bus weatherbus-weather weatherbus weatherbus-web ].each.with_object({}) do |repo, repos|
     builds = JSON.load(open("https://api.travis-ci.org/repos/seattle-beach/#{repo}/builds").read)
     successes = builds.select { |build| build['state'] == 'finished' && build['result'] && build['result'].zero? }
-    repos[repo] = successes.first
+    repos[repo] = successes.first['commit']
   end
 
-  puts 'Deploying the following commits:'
-  repos.each do |repo, build|
+  repos.each do |repo, commit|
     name = repo.ljust(repos.keys.map(&:size).max)
     message = nil
 
     Dir.chdir("modules/#{repo}") do
       system('git fetch')
-      message = `git show -s --format=%s #{build['commit']}`
+      message = `git show -s --format=%s #{commit}`
     end
 
-    puts "#{name} (#{build['commit'][0, 8]}): #{message}"
+    puts "#{name} (#{commit[0, 8]}): #{message}"
   end
-  print 'Continue? [y/N] '
+  print 'Continue deploying? [y/N] '
   exit unless STDIN.gets.chomp.downcase == 'y'
 
   space = ENV.fetch('DEPLOY_SPACE', 'weatherbus-staging')
   with_space(space) do
-    repos.each do |repo, build|
+    repos.each do |repo, commit|
       cd "modules/#{repo}" do
-        sh "git fetch && git checkout #{build['commit']}"
+        sh "git fetch && git checkout #{commit}"
         manifest = YAML.load_file('manifest.yml')
         hostname = manifest['applications'][0]['host'].sub('dev', 'staging')
         sh "cf push --hostname=#{hostname}"
