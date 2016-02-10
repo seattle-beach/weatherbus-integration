@@ -15,9 +15,7 @@ task :deploy do
   require 'yaml'
 
   repos = %w[ weatherbus-bus weatherbus-weather weatherbus weatherbus-web ].each.with_object({}) do |repo, repos|
-    builds = JSON.load(open("https://api.travis-ci.org/repos/seattle-beach/#{repo}/builds").read)
-    successes = builds.select { |build| build['state'] == 'finished' && build['result'] && build['result'].zero? }
-    repos[repo] = successes.first['commit']
+    repos[repo] = last_successful_commit(repo)
   end
 
   repos.each do |repo, commit|
@@ -45,6 +43,14 @@ task :deploy do
       end
     end
   end
+end
+
+def last_successful_commit(repo)
+  builds = JSON.load(open("https://api.travis-ci.org/repos/seattle-beach/#{repo}/builds").read)
+  successes = builds.select { |build| build['state'] == 'finished' &&
+                                      build['result'] &&
+                                      build['result'].zero? }
+  successes.first['commit']
 end
 
 def with_space(space)
