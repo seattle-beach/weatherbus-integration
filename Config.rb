@@ -40,7 +40,7 @@ class Config
     when "dev"
       "http://weatherbus-weather-dev.cfapps.io/"
     when "local"
-      "http://localhost:8080/"
+      "http://localhost:9090/"
     else
       raise "No app URL configured for the \"#{appenv}\" environment"
     end
