@@ -2,6 +2,7 @@ require 'net/http'
 require 'json'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
+require './Config'
 
 
 # Username is arbitrary but the stop ID and coordinates need to match up
@@ -12,35 +13,6 @@ STOP_NAME = 'Stevens Way & Benton Ln'
 LATITUDE = '47.654'
 LONGITUDE = '-122.305'
 
-def svcenv
- ENV['svcenv'] or "acceptance"
-end
-
-def appenv
- ENV['appenv'] or "acceptance"
-end
-
-def base_services_url
-  case svcenv
-  when "acceptance"
-    "http://weatherbus-prime-dev.cfapps.io/"
-  when "local"
-    "http://localhost:8080/"
-  else
-    raise "No service URL configured for the \"#{svcenv}\" environment"
-  end
-end
-
-def app_url
-  case appenv
-  when "acceptance"
-    "http://weatherbus-web-dev.cfapps.io/"
-  when "local"
-    "http://localhost:8000/"
-  else
-    raise "No app URL configured for the \"#{appenv}\" environment"
-  end
-end
 
 def post_json(uri, body)
   http = Net::HTTP.new(uri.host, uri.port)
@@ -48,7 +20,7 @@ def post_json(uri, body)
 end
 
 def add_user(username)
-  uri = URI("#{base_services_url}/users")
+  uri = URI("#{Config.base_services_url}/users")
   response = post_json(uri, "{\"username\": \"#{username}\"}")
 
   if response.code != '200'
@@ -60,7 +32,7 @@ def add_user(username)
 end
 
 def add_stop(username, stop_id)
-  uri = URI("#{base_services_url}/users/#{username}/stops")
+  uri = URI("#{Config.base_services_url}/users/#{username}/stops")
   response = post_json(uri, "{\"stopId\": \"#{stop_id}\"}")
 
   if response.code != '200'
@@ -84,7 +56,7 @@ describe 'Weatherbus web front-end integration', :type => :feature do
     add_stop(USERNAME, STOP_ID)
     path = File.expand_path(Dir.pwd + "/../target/index.html")
 
-    visit(app_url)
+    visit(Config.app_url)
     click_link('Log in')
     fill_in 'username', :with => USERNAME
     click_button('Go')
