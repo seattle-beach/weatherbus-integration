@@ -1,15 +1,17 @@
 class Config
   def self.svcenv
-   ENV['svcenv'] or "acceptance"
+   ENV['svcenv'] or "dev"
   end
 
   def self.appenv
-   ENV['appenv'] or "acceptance"
+   ENV['appenv'] or "dev"
   end
 
   def self.base_services_url
     case svcenv
-    when "acceptance"
+    when "staging"
+      "http://weatherbus-prime-staging.cfapps.io/"
+    when "dev"
       "http://weatherbus-prime-dev.cfapps.io/"
     when "local"
       "http://localhost:8080/"
@@ -20,10 +22,25 @@ class Config
 
   def self.app_url
     case appenv
-    when "acceptance"
+    when "staging"
+      "http://weatherbus-web-staging.cfapps.io/"
+    when "dev"
       "http://weatherbus-web-dev.cfapps.io/"
     when "local"
       "http://localhost:8000/"
+    else
+      raise "No app URL configured for the \"#{appenv}\" environment"
+    end
+  end
+
+  def self.climacon_base_url
+    case appenv
+    when "staging"
+      "http://weatherbus-weather-staging.cfapps.io/"
+    when "dev"
+      "http://weatherbus-weather-dev.cfapps.io/"
+    when "local"
+      "http://localhost:8080/"
     else
       raise "No app URL configured for the \"#{appenv}\" environment"
     end

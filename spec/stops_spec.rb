@@ -25,7 +25,7 @@ describe '/api/v1/stops/{stop ID}' do
     # This is a buys enough stop around the clock that there should always be departures.
     expect(data['departures'].length).to_not eq(0)
     data['departures'].each do |departure|
-      expect(departure['climacon_url']).to start_with('http://weatherbus-weather-dev.cfapps.io/assets')
+      expect(departure['climacon_url']).to start_with("#{Config.climacon_base_url}assets")
       expect(departure['climacon']).to be_instance_of(String)
       expect(departure['routeShortName']).to be_instance_of(String)
       expect(departure['headsign']).to be_instance_of(String)
